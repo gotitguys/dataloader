@@ -69,6 +69,31 @@ int main()
   cout << "\n"; 
   file.close(); 
 
+  //*******************POPULATE PRODUCTS***********************************
+  ifstream pfile("products.csv");
+  string cat, name, sprice, dprice;
+
+  while (pfile.good())
+  {
+    getline (pfile, cat, ',');
+    if ( !pfile.eof()) {
+      cout << cat << "\t";
+      getline (pfile, name, ',');
+      cout << name << "\t";
+      getline (pfile, sprice, ',');
+      cout << sprice << "\t";
+      getline (pfile, dprice, ',');
+      cout << dprice << "\n";
+
+      string insert = "INSERT INTO customer(P_id,\
+        Category,  P_name,Lname, S_price, P_price) \
+        VALUES (DEFAULT,'"+ cat +"','"+ name +\
+        "','"+  sprice+"','"+ dprice+"')";
+        res = PQexec(conn, insert.c_str());
+    }
+  }
+  cout << "\n"; 
+  pfile.close(); 
   //const char* copy = "COPY addresses FROM 'customer.csv' DELIMITER ',' CSV HEADER;";
   //res = PQexec(conn, copy);
 
