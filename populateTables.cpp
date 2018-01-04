@@ -10,6 +10,7 @@ using namespace std;
 void PopulateTables(PGconn *conn);
 void PopulateCustomerTable(PGconn *conn);
 void PopulateProductsTable(PGconn *conn);
+void PopulateReceivesTable(PGconn *conn);
 
 extern PGconn *conn;
 
@@ -17,6 +18,7 @@ void PopulateTables(PGconn *conn)
 {
 	PopulateCustomerTable(conn);
 	PopulateProductsTable(conn);
+	PopulateReceivesTable(conn);
 }
 
 void PopulateCustomerTable(PGconn *conn)
@@ -35,8 +37,8 @@ void PopulateCustomerTable(PGconn *conn)
 			getline (file, pword, ',');
 			getline (file, email, ',');
 			getline (file, phone);
-			cout << fname <<"\t" << middle_init << "\t" << lname <<
-			"\t"<< pword << "\t" << email << "\t" << phone << "\n" ;
+			//cout << fname <<"\t" << middle_init << "\t" << lname <<
+			//"\t"<< pword << "\t" << email << "\t" << phone << "\n" ;
 
 			string insert = "INSERT INTO customer (";
 			insert += "Customer_id, Fname, Middle_init, ";
@@ -72,16 +74,14 @@ void PopulateProductsTable(PGconn *conn)
 	string cat, pname, sprice, pprice;
 	while (file.good())
 	{
-		//need to check first line for reader to see if it is eof before if
-		//statement
 		getline (file, cat, ',');
 		if ( !file.eof())
 		{
 			getline (file, pname, ',');
 			getline (file, sprice, ',');
 			getline (file, pprice);
-			cout << cat <<"\t" << pname << "\t" << sprice <<
-			"\t"<< pprice  << "\n" ;
+			//cout << cat <<"\t" << pname << "\t" << sprice <<
+			//"\t"<< pprice  << "\n" ;
 
 			string insert = "INSERT INTO products (";
 			insert += "P_id, Category, P_name, ";
@@ -106,3 +106,46 @@ void PopulateProductsTable(PGconn *conn)
 	cout << "\n"; 
 	file.close(); 
 }
+
+void PopulateReceivesTable(PGconn *conn)
+{
+	ifstream file("receives.csv");
+	string qty, date, price, poid, pid;
+	while (file.good())
+	{
+		getline (file, qty, ',');
+		if ( !file.eof())
+		{
+			getline (file, date, ',');
+			getline (file, price, ',');
+			getline (file, poid, ',');
+			getline (file, pid);
+			//cout << qty <<"\t" << date << "\t" << price <<
+			//"\t"<< poid << "\t"<< pid << "\n" ;
+
+			string insert = "INSERT INTO receives (";
+			insert += "Qty_received, datee , P_price, ";
+			insert += "Po_id, P_id) ";
+			insert += "VALUES ('";
+			insert += qty;
+			insert += "','";
+			insert += date;
+			insert += "','";
+			insert += price;
+			insert += "','";
+			insert += poid;
+			insert += "','";
+			insert += pid;
+			insert += "')";
+
+			PGresult *res = PQexec(conn, insert.c_str());
+			if  (PQresultStatus(res) != PGRES_COMMAND_OK)
+				printf("Insert tuple from csv failed\n");
+
+			PQclear(res);
+		}
+	}
+	cout << "\n"; 
+	file.close(); 
+}
+
