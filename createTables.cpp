@@ -9,6 +9,7 @@ using namespace std;
 void CreateTables(PGconn *conn);
 void CreateContainsTable(PGconn *conn);
 void CreateCustomerTable(PGconn *conn);
+void CreateOrdersTable(PGconn *conn);
 void CreateProductsTable(PGconn *conn);
 void CreateReceivesTable(PGconn *conn);
 
@@ -16,6 +17,7 @@ void CreateTables(PGconn *conn)
 {
 	CreateContainsTable(conn);
 	CreateCustomerTable(conn);
+	CreateOrdersTable(conn);
 	CreateProductsTable(conn);
 	CreateReceivesTable(conn);
 }
@@ -54,6 +56,21 @@ void CreateCustomerTable(PGconn *conn)
 	}
 
 	else printf("Create customer table - successful\n");
+}
+
+void CreateOrdersTable(PGconn *conn)
+{
+	string customerTable = "CREATE TABLE IF NOT EXISTS Orders (";
+	customerTable += " Order_num SERIAL NOT NULL,";
+	customerTable += " Order_date VARCHAR(15) NOT NULL,";
+	customerTable += " Time time NOT NULL)";
+
+	PGresult *res = PQexec(conn, customerTable.c_str());
+	if (PQresultStatus(res) != PGRES_COMMAND_OK) {
+		printf("Create orders table failed\n");
+	}
+
+	else printf("Create orders table - successful\n");
 }
 
 void CreateProductsTable(PGconn *conn)

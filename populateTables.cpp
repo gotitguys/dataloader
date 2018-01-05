@@ -10,6 +10,7 @@ using namespace std;
 void PopulateTables(PGconn *conn);
 void PopulateContainsTable(PGconn *conn);
 void PopulateCustomerTable(PGconn *conn);
+void PopulateOrdersTable(PGconn *conn);
 void PopulateProductsTable(PGconn *conn);
 void PopulateReceivesTable(PGconn *conn);
 
@@ -19,6 +20,7 @@ void PopulateTables(PGconn *conn)
 {
 	PopulateContainsTable(conn);
 	PopulateCustomerTable(conn);
+	PopulateOrdersTable(conn);
 	PopulateProductsTable(conn);
 	PopulateReceivesTable(conn);
 }
@@ -64,6 +66,7 @@ void PopulateContainsTable(PGconn *conn)
 	cout << "\n"; 
 	file.close(); 
 }
+
 void PopulateCustomerTable(PGconn *conn)
 {
 	ifstream file("customer.csv");
@@ -98,6 +101,38 @@ void PopulateCustomerTable(PGconn *conn)
 			insert += email;
 			insert += "','";
 			insert += phone;
+			insert += "')";
+
+			PGresult *res = PQexec(conn, insert.c_str());
+			if  (PQresultStatus(res) != PGRES_COMMAND_OK)
+				printf("Insert tuple from csv failed\n");
+
+			PQclear(res);
+		}
+	}
+	cout << "\n"; 
+	file.close(); 
+}
+
+void PopulateOrdersTable(PGconn *conn)
+{
+	ifstream file("orders.csv");
+	string date, time;
+	while (file.good())
+	{
+		getline (file, date, ',');
+		if ( !file.eof())
+		{
+			getline (file, time);
+			//cout << fname <<"\t" << middle_init << "\t" << lname <<
+			//"\t"<< pword << "\t" << email << "\t" << phone << "\n" ;
+
+			string insert = "INSERT INTO orders (";
+			insert += "Order_num, Order_date, time) ";
+			insert += "VALUES (DEFAULT,'";
+			insert += date;
+			insert += "','";
+			insert += time;
 			insert += "')";
 
 			PGresult *res = PQexec(conn, insert.c_str());
