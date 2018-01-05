@@ -7,15 +7,34 @@
 using namespace std;
 
 void CreateTables(PGconn *conn);
+void CreateContainsTable(PGconn *conn);
 void CreateCustomerTable(PGconn *conn);
 void CreateProductsTable(PGconn *conn);
 void CreateReceivesTable(PGconn *conn);
 
 void CreateTables(PGconn *conn)
 {
+	CreateContainsTable(conn);
 	CreateCustomerTable(conn);
 	CreateProductsTable(conn);
 	CreateReceivesTable(conn);
+}
+
+void CreateContainsTable(PGconn *conn)
+{
+	string table = "CREATE TABLE IF NOT EXISTS Contains (";
+	table += " Qty_sold integer NOT NULL,";
+	table += " Date_sold date NOT NULL,";
+	table += " S_price double precision NOT NULL,";
+	table += " order_num SERIAL NOT NULL,";
+	table += " P_id integer NOT NULL)";
+
+	PGresult *res = PQexec(conn, table.c_str());
+	if (PQresultStatus(res) != PGRES_COMMAND_OK) {
+		printf("Create contains table failed\n");
+	}
+
+	else printf("Create contains table - successful\n");	
 }
 
 void CreateCustomerTable(PGconn *conn)

@@ -8,6 +8,7 @@ using namespace std;
 
 void DropTables(PGconn *conn);
 
+void DropContainsTable(PGconn *conn);
 void DropCustomerTable(PGconn *conn);
 void DropProductsTable(PGconn *conn);
 void DropReceivesTable(PGconn *conn);
@@ -16,9 +17,26 @@ extern PGconn *conn;
 
 void DropTables(PGconn *conn)
 {
+	DropContainsTable(conn);
 	DropCustomerTable(conn);
 	DropProductsTable(conn);
 	DropReceivesTable(conn);
+}
+
+void DropContainsTable(PGconn *conn)
+{
+	PGresult *res = PQexec(conn, "DROP TABLE contains");
+	printf("=============================================\n");
+	printf("DROP TABLE CONTAINS\n");
+
+	if (PQresultStatus(res) != PGRES_COMMAND_OK)
+	{
+		printf("Drop table failed\n");
+	}
+
+	else printf("Drop table - successful\n");
+
+	PQclear(res);
 }
 
 void DropCustomerTable(PGconn *conn)
