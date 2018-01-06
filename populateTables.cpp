@@ -11,6 +11,7 @@ void PopulateTables(PGconn *conn);
 void PopulateContainsTable(PGconn *conn);
 void PopulateCustomerTable(PGconn *conn);
 void PopulateOrdersTable(PGconn *conn);
+void PopulatePlacesTable(PGconn *conn);
 void PopulateProductsTable(PGconn *conn);
 void PopulateReceivesTable(PGconn *conn);
 
@@ -21,6 +22,7 @@ void PopulateTables(PGconn *conn)
 	PopulateContainsTable(conn);
 	PopulateCustomerTable(conn);
 	PopulateOrdersTable(conn);
+	PopulatePlacesTable(conn);
 	PopulateProductsTable(conn);
 	PopulateReceivesTable(conn);
 }
@@ -28,6 +30,7 @@ void PopulateTables(PGconn *conn)
 void PopulateContainsTable(PGconn *conn)
 {
 	ifstream file("contains.csv");
+	printf("****BEGIN POPULATING contains****\n");
 	string qty, date, price, order, pid;
 	while (file.good())
 	{
@@ -70,6 +73,7 @@ void PopulateContainsTable(PGconn *conn)
 void PopulateCustomerTable(PGconn *conn)
 {
 	ifstream file("customer.csv");
+	printf("****BEGIN POPULATING customer****\n");
 	string fname, middle_init, lname, pword, email, phone;
 	while (file.good())
 	{
@@ -117,13 +121,16 @@ void PopulateCustomerTable(PGconn *conn)
 void PopulateOrdersTable(PGconn *conn)
 {
 	ifstream file("orders.csv");
-	string date, time;
+	printf("****BEGIN POPULATING orders****\n");
+	string date, hour, minute, time;
 	while (file.good())
 	{
 		getline (file, date, ',');
 		if ( !file.eof())
 		{
-			getline (file, time);
+			getline (file, hour, ',');
+			getline (file, minute);
+			time = hour + ':' + minute;
 			//cout << fname <<"\t" << middle_init << "\t" << lname <<
 			//"\t"<< pword << "\t" << email << "\t" << phone << "\n" ;
 
@@ -146,9 +153,42 @@ void PopulateOrdersTable(PGconn *conn)
 	file.close(); 
 }
 
+void PopulatePlacesTable(PGconn *conn)
+{
+	ifstream file("places.csv");
+	printf("****BEGIN POPULATING places****\n");
+	string id, num;
+	while (file.good())
+	{
+		getline (file, id, ',');
+		if ( !file.eof())
+		{
+			getline (file, num);
+			//cout << fname <<"\t" << middle_init << "\t" << lname <<
+			//"\t"<< pword << "\t" << email << "\t" << phone << "\n" ;
+
+			string insert = "INSERT INTO places (";
+			insert += "Customer_id, Order_num) ";
+			insert += "VALUES ('";
+			insert += id;
+			insert += "','";
+			insert += num;
+			insert += "')";
+
+			PGresult *res = PQexec(conn, insert.c_str());
+			if  (PQresultStatus(res) != PGRES_COMMAND_OK)
+				printf("Insert tuple from csv failed\n");
+
+			PQclear(res);
+		}
+	}
+	cout << "\n"; 
+	file.close(); 
+}
 void PopulateProductsTable(PGconn *conn)
 {
 	ifstream file("products.csv");
+	printf("****BEGIN POPULATING products****\n");
 	string cat, pname, sprice, pprice;
 	while (file.good())
 	{
@@ -188,6 +228,7 @@ void PopulateProductsTable(PGconn *conn)
 void PopulateReceivesTable(PGconn *conn)
 {
 	ifstream file("receives.csv");
+	printf("****BEGIN POPULATING receives****\n");
 	string qty, date, price, poid, pid;
 	while (file.good())
 	{

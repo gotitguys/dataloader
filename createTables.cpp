@@ -10,6 +10,7 @@ void CreateTables(PGconn *conn);
 void CreateContainsTable(PGconn *conn);
 void CreateCustomerTable(PGconn *conn);
 void CreateOrdersTable(PGconn *conn);
+void CreatePlacesTable(PGconn *conn);
 void CreateProductsTable(PGconn *conn);
 void CreateReceivesTable(PGconn *conn);
 
@@ -18,6 +19,7 @@ void CreateTables(PGconn *conn)
 	CreateContainsTable(conn);
 	CreateCustomerTable(conn);
 	CreateOrdersTable(conn);
+	CreatePlacesTable(conn);
 	CreateProductsTable(conn);
 	CreateReceivesTable(conn);
 }
@@ -60,9 +62,9 @@ void CreateCustomerTable(PGconn *conn)
 
 void CreateOrdersTable(PGconn *conn)
 {
-	string customerTable = "CREATE TABLE IF NOT EXISTS Orders (";
+	string customerTable = "CREATE TABLE IF NOT EXISTS orders (";
 	customerTable += " Order_num SERIAL NOT NULL,";
-	customerTable += " Order_date VARCHAR(15) NOT NULL,";
+	customerTable += " Order_date date NOT NULL,";
 	customerTable += " Time time NOT NULL)";
 
 	PGresult *res = PQexec(conn, customerTable.c_str());
@@ -72,6 +74,21 @@ void CreateOrdersTable(PGconn *conn)
 
 	else printf("Create orders table - successful\n");
 }
+
+void CreatePlacesTable(PGconn *conn)
+{
+	string customerTable = "CREATE TABLE IF NOT EXISTS Places (";
+	customerTable += " Order_num int NOT NULL ,";
+	customerTable += " Customer_id int NOT NULL)";
+
+	PGresult *res = PQexec(conn, customerTable.c_str());
+	if (PQresultStatus(res) != PGRES_COMMAND_OK) {
+		printf("Create places table failed\n");
+	}
+
+	else printf("Create places table - successful\n");
+}
+
 
 void CreateProductsTable(PGconn *conn)
 {
