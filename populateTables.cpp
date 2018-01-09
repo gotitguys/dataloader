@@ -8,6 +8,7 @@
 using namespace std;
 
 void PopulateTables(PGconn *conn);
+void PopulateAddressTable(PGconn *conn);
 void PopulateContainsTable(PGconn *conn);
 void PopulateCustomerTable(PGconn *conn);
 void PopulateOrdersTable(PGconn *conn);
@@ -19,12 +20,64 @@ extern PGconn *conn;
 
 void PopulateTables(PGconn *conn)
 {
+	PopulateAddressTable(conn);
 	PopulateContainsTable(conn);
 	PopulateCustomerTable(conn);
 	PopulateOrdersTable(conn);
 	PopulatePlacesTable(conn);
 	PopulateProductsTable(conn);
 	PopulateReceivesTable(conn);
+}
+
+void PopulateAddressTable(PGconn *conn)
+{
+	ifstream file("address.csv");
+	printf("****BEGIN POPULATING address****\n");
+	string cid, snum, sname, zip, city, state,type;
+	while (file.good())
+	{
+		//need to check first line for reader to see if it is eof before if
+		//statement
+		getline (file, cid, ',');
+		if ( !file.eof())
+		{
+			getline (file, snum, ',');
+			getline (file, sname, ',');
+			getline (file, zip, ',');
+			getline (file, city, ',');
+			getline (file, state, ',');
+			getline (file, type);
+			//cout << fname <<"\t" << middle_init << "\t" << lname <<
+			//"\t"<< pword << "\t" << email << "\t" << phone << "\n" ;
+
+			string insert = "INSERT INTO address (";
+			insert += "Customer_id, street_num, street_name, ";
+			insert += "zip, city, state, type) ";
+			insert += "VALUES ('";
+			insert += cid;
+			insert += "','";
+			insert += snum;
+			insert += "','";
+			insert += sname;
+			insert += "','";
+			insert += zip;
+			insert += "','";
+			insert += city;
+			insert += "','";
+			insert += state;
+			insert += "','";
+			insert += type;
+			insert += "')";
+
+			PGresult *res = PQexec(conn, insert.c_str());
+			if  (PQresultStatus(res) != PGRES_COMMAND_OK)
+				printf("Insert tuple from csv failed\n");
+
+			PQclear(res);
+		}
+	}
+	cout << "\n"; 
+	file.close(); 
 }
 
 void PopulateContainsTable(PGconn *conn)
