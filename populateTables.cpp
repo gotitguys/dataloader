@@ -12,6 +12,7 @@ void PopulateAddressTable(PGconn *conn);
 void PopulateContainsTable(PGconn *conn);
 void PopulateCustomerTable(PGconn *conn);
 void PopulateOrdersTable(PGconn *conn);
+void PopulatePaymentTable(PGconn *conn);
 void PopulatePlacesTable(PGconn *conn);
 void PopulateProductsTable(PGconn *conn);
 void PopulateReceivesTable(PGconn *conn);
@@ -24,6 +25,7 @@ void PopulateTables(PGconn *conn)
 	PopulateContainsTable(conn);
 	PopulateCustomerTable(conn);
 	PopulateOrdersTable(conn);
+	PopulatePaymentTable(conn);
 	PopulatePlacesTable(conn);
 	PopulateProductsTable(conn);
 	PopulateReceivesTable(conn);
@@ -193,6 +195,72 @@ void PopulateOrdersTable(PGconn *conn)
 			insert += date;
 			insert += "','";
 			insert += time;
+			insert += "')";
+
+			PGresult *res = PQexec(conn, insert.c_str());
+			if  (PQresultStatus(res) != PGRES_COMMAND_OK)
+				printf("Insert tuple from csv failed\n");
+
+			PQclear(res);
+		}
+	}
+	cout << "\n"; 
+	file.close(); 
+}
+
+void PopulatePaymentTable(PGconn *conn)
+{
+	ifstream file("payment.csv");
+	printf("****BEGIN POPULATING payment****\n");
+	string fname, mi, lname, card, exp, cvc, type, streetnum, streetname,zip, city, state;
+	while (file.good())
+	{
+		//need to check first line for reader to see if it is eof before if
+		//statement
+		getline (file, fname, ',');
+		if ( !file.eof())
+		{
+			getline (file, mi, ',');
+			getline (file, lname, ',');
+			getline (file, card, ',');
+			getline (file, exp, ',');
+			getline (file, cvc, ',');
+			getline (file, type, ',');
+			getline (file, streetnum, ',');
+			getline (file, streetname, ',');
+			getline (file, zip, ',');
+			getline (file, city, ',');
+			getline (file, state);
+
+			string insert = "INSERT INTO payment (";
+			insert += "fname, middle_init, lname, ";
+			insert += "card_num, expiration, cvc, type, ";
+			insert += "street_num, street_name, ";
+			insert += "zip, city, state) ";
+			insert += "VALUES ('";
+			insert += fname;
+			insert += "','";
+			insert += mi;
+			insert += "','";
+			insert += lname;
+			insert += "','";
+			insert += card;
+			insert += "','";
+			insert += exp;
+			insert += "','";
+			insert += cvc;
+			insert += "','";
+			insert += type;
+			insert += "','";
+			insert += streetnum;
+			insert += "','";
+			insert += streetname;
+			insert += "','";
+			insert += zip;
+			insert += "','";
+			insert += city;
+			insert += "','";
+			insert += state;
 			insert += "')";
 
 			PGresult *res = PQexec(conn, insert.c_str());

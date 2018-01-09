@@ -11,6 +11,7 @@ void CreateAddressTable(PGconn *conn);
 void CreateContainsTable(PGconn *conn);
 void CreateCustomerTable(PGconn *conn);
 void CreateOrdersTable(PGconn *conn);
+void CreatePaymentTable(PGconn *conn);
 void CreatePlacesTable(PGconn *conn);
 void CreateProductsTable(PGconn *conn);
 void CreateReceivesTable(PGconn *conn);
@@ -21,6 +22,7 @@ void CreateTables(PGconn *conn)
 	CreateContainsTable(conn);
 	CreateCustomerTable(conn);
 	CreateOrdersTable(conn);
+	CreatePaymentTable(conn);
 	CreatePlacesTable(conn);
 	CreateProductsTable(conn);
 	CreateReceivesTable(conn);
@@ -94,6 +96,30 @@ void CreateOrdersTable(PGconn *conn)
 	}
 
 	else printf("Create orders table - successful\n");
+}
+
+void CreatePaymentTable(PGconn *conn)
+{
+	string customerTable = "CREATE TABLE IF NOT EXISTS Payment (";
+	customerTable += " Fname VARCHAR(15) NOT NULL,";
+	customerTable += " Middle_init VARCHAR(1) NULL,";
+	customerTable += " Lname VARCHAR(20) NOT NULL,";
+	customerTable += " Card_num VARCHAR(16) NOT NULL,";
+	customerTable += " Expiration VARCHAR(5) NOT NULL,";
+	customerTable += " Cvc VARCHAR(4) NULL,";
+	customerTable += " Type VARCHAR(20) NOT NULL,";
+	customerTable += " Street_num integer NOT NULL,";
+	customerTable += " Street_name VARCHAR(255) NOT NULL,";
+	customerTable += " Zip integer NOT NULL,";
+	customerTable += " City VARCHAR(255) NOT NULL,";
+	customerTable += " State VARCHAR(2) NOT NULL)";
+
+	PGresult *res = PQexec(conn, customerTable.c_str());
+	if (PQresultStatus(res) != PGRES_COMMAND_OK) {
+		printf("Create payment table failed\n");
+	}
+
+	else printf("Create payment table - successful\n");
 }
 
 void CreatePlacesTable(PGconn *conn)
