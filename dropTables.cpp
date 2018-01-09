@@ -8,9 +8,10 @@ using namespace std;
 
 void DropTables(PGconn *conn);
 
-void DropContainsTable(PGconn *conn);
 void DropAddressTable(PGconn *conn);
+void DropContainsTable(PGconn *conn);
 void DropCustomerTable(PGconn *conn);
+void DropMakesTable(PGconn *conn);
 void DropOrdersTable(PGconn *conn);
 void DropPaymentsTable(PGconn *conn);
 void DropPlacesTable(PGconn *conn);
@@ -25,6 +26,7 @@ void DropTables(PGconn *conn)
 	DropContainsTable(conn);
 	DropCustomerTable(conn);
 	DropOrdersTable(conn);
+	DropMakesTable(conn);
 	DropPaymentsTable(conn);
 	DropPlacesTable(conn);
 	DropProductsTable(conn);
@@ -68,6 +70,21 @@ void DropCustomerTable(PGconn *conn)
 	PGresult *res = PQexec(conn, "DROP TABLE customer");
 	printf("=============================================\n");
 	printf("DROP TABLE CUSTOMER\n");
+	if (PQresultStatus(res) != PGRES_COMMAND_OK)
+	{
+		printf("Drop table failed\n");
+	}
+
+	else printf("Drop table - successful\n");
+
+	PQclear(res);
+}
+
+void DropMakesTable(PGconn *conn)
+{
+	PGresult *res = PQexec(conn, "DROP TABLE makes");
+	printf("=============================================\n");
+	printf("DROP TABLE MAKES\n");
 	if (PQresultStatus(res) != PGRES_COMMAND_OK)
 	{
 		printf("Drop table failed\n");

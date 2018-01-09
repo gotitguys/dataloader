@@ -10,6 +10,7 @@ void CreateTables(PGconn *conn);
 void CreateAddressTable(PGconn *conn);
 void CreateContainsTable(PGconn *conn);
 void CreateCustomerTable(PGconn *conn);
+void CreateMakesTable(PGconn *conn);
 void CreateOrdersTable(PGconn *conn);
 void CreatePaymentTable(PGconn *conn);
 void CreatePlacesTable(PGconn *conn);
@@ -21,6 +22,7 @@ void CreateTables(PGconn *conn)
 	CreateAddressTable(conn);
 	CreateContainsTable(conn);
 	CreateCustomerTable(conn);
+	CreateMakesTable(conn);
 	CreateOrdersTable(conn);
 	CreatePaymentTable(conn);
 	CreatePlacesTable(conn);
@@ -81,6 +83,20 @@ void CreateCustomerTable(PGconn *conn)
 	}
 
 	else printf("Create customer table - successful\n");
+}
+
+void CreateMakesTable(PGconn *conn)
+{
+	string customerTable = "CREATE TABLE IF NOT EXISTS Makes (";
+	customerTable += " Customer_id int NOT NULL ,";
+	customerTable += " Card_num VARCHAR(16) NOT NULL)";
+
+	PGresult *res = PQexec(conn, customerTable.c_str());
+	if (PQresultStatus(res) != PGRES_COMMAND_OK) {
+		printf("Create makes table failed\n");
+	}
+
+	else printf("Create makes table - successful\n");
 }
 
 void CreateOrdersTable(PGconn *conn)

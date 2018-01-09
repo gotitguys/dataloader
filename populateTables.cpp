@@ -11,6 +11,7 @@ void PopulateTables(PGconn *conn);
 void PopulateAddressTable(PGconn *conn);
 void PopulateContainsTable(PGconn *conn);
 void PopulateCustomerTable(PGconn *conn);
+void PopulateMakesTable(PGconn *conn);
 void PopulateOrdersTable(PGconn *conn);
 void PopulatePaymentTable(PGconn *conn);
 void PopulatePlacesTable(PGconn *conn);
@@ -24,6 +25,7 @@ void PopulateTables(PGconn *conn)
 	PopulateAddressTable(conn);
 	PopulateContainsTable(conn);
 	PopulateCustomerTable(conn);
+	PopulateMakesTable(conn);
 	PopulateOrdersTable(conn);
 	PopulatePaymentTable(conn);
 	PopulatePlacesTable(conn);
@@ -173,6 +175,37 @@ void PopulateCustomerTable(PGconn *conn)
 	file.close(); 
 }
 
+void PopulateMakesTable(PGconn *conn)
+{
+	ifstream file("makes.csv");
+	printf("****BEGIN POPULATING makes****\n");
+	string id, num;
+	while (file.good())
+	{
+		getline (file, id, ',');
+		if ( !file.eof())
+		{
+			getline (file, num);
+
+			string insert = "INSERT INTO makes (";
+			insert += "Customer_id, card_num) ";
+			insert += "VALUES ('";
+			insert += id;
+			insert += "','";
+			insert += num;
+			insert += "')";
+
+			PGresult *res = PQexec(conn, insert.c_str());
+			if  (PQresultStatus(res) != PGRES_COMMAND_OK)
+				printf("Insert tuple from csv failed\n");
+
+			PQclear(res);
+		}
+	}
+	cout << "\n"; 
+	file.close(); 
+}
+
 void PopulateOrdersTable(PGconn *conn)
 {
 	ifstream file("orders.csv");
@@ -285,8 +318,6 @@ void PopulatePlacesTable(PGconn *conn)
 		if ( !file.eof())
 		{
 			getline (file, num);
-			//cout << fname <<"\t" << middle_init << "\t" << lname <<
-			//"\t"<< pword << "\t" << email << "\t" << phone << "\n" ;
 
 			string insert = "INSERT INTO places (";
 			insert += "Customer_id, Order_num) ";
@@ -306,6 +337,7 @@ void PopulatePlacesTable(PGconn *conn)
 	cout << "\n"; 
 	file.close(); 
 }
+
 void PopulateProductsTable(PGconn *conn)
 {
 	ifstream file("products.csv");
