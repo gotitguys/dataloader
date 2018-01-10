@@ -13,6 +13,7 @@ void PopulateContainsTable(PGconn *conn);
 void PopulateCustomerTable(PGconn *conn);
 void PopulateMakesTable(PGconn *conn);
 void PopulateOrdersTable(PGconn *conn);
+void PopulatePayforTable(PGconn *conn);
 void PopulatePaymentTable(PGconn *conn);
 void PopulatePlacesTable(PGconn *conn);
 void PopulateProductsTable(PGconn *conn);
@@ -27,6 +28,7 @@ void PopulateTables(PGconn *conn)
 	PopulateCustomerTable(conn);
 	PopulateMakesTable(conn);
 	PopulateOrdersTable(conn);
+	PopulatePayforTable(conn);
 	PopulatePaymentTable(conn);
 	PopulatePlacesTable(conn);
 	PopulateProductsTable(conn);
@@ -228,6 +230,37 @@ void PopulateOrdersTable(PGconn *conn)
 			insert += date;
 			insert += "','";
 			insert += time;
+			insert += "')";
+
+			PGresult *res = PQexec(conn, insert.c_str());
+			if  (PQresultStatus(res) != PGRES_COMMAND_OK)
+				printf("Insert tuple from csv failed\n");
+
+			PQclear(res);
+		}
+	}
+	cout << "\n"; 
+	file.close(); 
+}
+
+void PopulatePayforTable(PGconn *conn)
+{
+	ifstream file("payfor.csv");
+	printf("****BEGIN POPULATING payfor****\n");
+	string id, num;
+	while (file.good())
+	{
+		getline (file, id, ',');
+		if ( !file.eof())
+		{
+			getline (file, num);
+
+			string insert = "INSERT INTO payfor (";
+			insert += "Order_num, card_num) ";
+			insert += "VALUES ('";
+			insert += id;
+			insert += "','";
+			insert += num;
 			insert += "')";
 
 			PGresult *res = PQexec(conn, insert.c_str());

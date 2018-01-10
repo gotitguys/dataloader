@@ -13,6 +13,7 @@ void DropContainsTable(PGconn *conn);
 void DropCustomerTable(PGconn *conn);
 void DropMakesTable(PGconn *conn);
 void DropOrdersTable(PGconn *conn);
+void DropPayforTable(PGconn *conn);
 void DropPaymentsTable(PGconn *conn);
 void DropPlacesTable(PGconn *conn);
 void DropProductsTable(PGconn *conn);
@@ -27,6 +28,7 @@ void DropTables(PGconn *conn)
 	DropCustomerTable(conn);
 	DropOrdersTable(conn);
 	DropMakesTable(conn);
+	DropPayforTable(conn);
 	DropPaymentsTable(conn);
 	DropPlacesTable(conn);
 	DropProductsTable(conn);
@@ -100,6 +102,21 @@ void DropOrdersTable(PGconn *conn)
 	PGresult *res = PQexec(conn, "DROP TABLE orders");
 	printf("=============================================\n");
 	printf("DROP TABLE ORDERS\n");
+	if (PQresultStatus(res) != PGRES_COMMAND_OK)
+	{
+		printf("Drop table failed\n");
+	}
+
+	else printf("Drop table - successful\n");
+
+	PQclear(res);
+}
+
+void DropPayforTable(PGconn *conn)
+{
+	PGresult *res = PQexec(conn, "DROP TABLE payfor");
+	printf("=============================================\n");
+	printf("DROP TABLE PAYFOR\n");
 	if (PQresultStatus(res) != PGRES_COMMAND_OK)
 	{
 		printf("Drop table failed\n");
