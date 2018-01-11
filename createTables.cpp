@@ -17,9 +17,12 @@ void CreatePaymentTable(PGconn *conn);
 void CreatePlacesTable(PGconn *conn);
 void CreateProductsTable(PGconn *conn);
 void CreateReceivesTable(PGconn *conn);
+void CreateStatusTable(PGconn *conn);
+void CreateUpdatesTable(PGconn *conn);
 
 void CreateTables(PGconn *conn)
 {
+	printf("\033[1;34m");
 	CreateAddressTable(conn);
 	CreateContainsTable(conn);
 	CreateCustomerTable(conn);
@@ -30,6 +33,8 @@ void CreateTables(PGconn *conn)
 	CreatePlacesTable(conn);
 	CreateProductsTable(conn);
 	CreateReceivesTable(conn);
+	CreateStatusTable(conn);
+	CreateUpdatesTable(conn);
 }
 
 void CreateAddressTable(PGconn *conn)
@@ -201,4 +206,33 @@ void CreateReceivesTable(PGconn *conn)
 	}
 
 	else printf("Create receives table - successful\n");	
+}
+
+void CreateStatusTable(PGconn *conn)
+{
+	string customerTable = "CREATE TABLE IF NOT EXISTS Status (";
+	customerTable += " S_id SERIAL NOT NULL ,";
+	customerTable += " Status int NOT NULL)";
+
+	PGresult *res = PQexec(conn, customerTable.c_str());
+	if (PQresultStatus(res) != PGRES_COMMAND_OK) {
+		printf("Create status table failed\n");
+	}
+
+	else printf("Create status table - successful\n");
+}
+
+void CreateUpdatesTable(PGconn *conn)
+{
+	string customerTable = "CREATE TABLE IF NOT EXISTS updates (";
+	customerTable += " update_time time NOT NULL ,";
+	customerTable += " s_id int NOT NULL ,";
+	customerTable += " order_num int NOT NULL)";
+
+	PGresult *res = PQexec(conn, customerTable.c_str());
+	if (PQresultStatus(res) != PGRES_COMMAND_OK) {
+		printf("Create updates table failed\n");
+	}
+
+	else printf("Create updates table - successful\n");
 }

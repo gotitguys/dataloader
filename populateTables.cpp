@@ -18,11 +18,14 @@ void PopulatePaymentTable(PGconn *conn);
 void PopulatePlacesTable(PGconn *conn);
 void PopulateProductsTable(PGconn *conn);
 void PopulateReceivesTable(PGconn *conn);
+void PopulateStatusTable(PGconn *conn);
+void PopulateUpdatesTable(PGconn *conn);
 
 extern PGconn *conn;
 
 void PopulateTables(PGconn *conn)
 {
+	printf("\033[1;35m");
 	PopulateAddressTable(conn);
 	PopulateContainsTable(conn);
 	PopulateCustomerTable(conn);
@@ -33,6 +36,8 @@ void PopulateTables(PGconn *conn)
 	PopulatePlacesTable(conn);
 	PopulateProductsTable(conn);
 	PopulateReceivesTable(conn);
+	PopulateStatusTable(conn);
+	PopulateUpdatesTable(conn);
 }
 
 void PopulateAddressTable(PGconn *conn)
@@ -441,6 +446,69 @@ void PopulateReceivesTable(PGconn *conn)
 			insert += poid;
 			insert += "','";
 			insert += pid;
+			insert += "')";
+
+			PGresult *res = PQexec(conn, insert.c_str());
+			if  (PQresultStatus(res) != PGRES_COMMAND_OK)
+				printf("Insert tuple from csv failed\n");
+
+			PQclear(res);
+		}
+	}
+	cout << "\n"; 
+	file.close(); 
+}
+
+void PopulateStatusTable(PGconn *conn)
+{
+	ifstream file("status.csv");
+	printf("****BEGIN POPULATING status****\n");
+	string status;
+	while (file.good())
+	{
+		getline (file, status);
+		if ( !file.eof())
+		{
+			string insert = "INSERT INTO status (";
+			insert += "S_id, Status) ";
+			insert += "VALUES (DEFAULT,'";
+			insert += status;
+			insert += "')";
+
+			PGresult *res = PQexec(conn, insert.c_str());
+			if  (PQresultStatus(res) != PGRES_COMMAND_OK)
+				printf("Insert tuple from csv failed\n");
+
+			PQclear(res);
+		}
+	}
+	cout << "\n"; 
+	file.close(); 
+}
+
+void PopulateUpdatesTable(PGconn *conn)
+{
+	ifstream file("updates.csv");
+	printf("****BEGIN POPULATING updates****\n");
+	string hour, minute, id, order, time;
+	while (file.good())
+	{
+		getline (file, hour, ',');
+		if ( !file.eof())
+		{
+			getline (file, minute, ',');
+			time = hour + ':' + minute;
+			getline (file, id, ',');
+			getline (file, order);
+
+			string insert = "INSERT INTO updates (";
+			insert += "Update_time, S_id, Order_num) ";
+			insert += "VALUES ('";
+			insert += time;
+			insert += "','";
+			insert += id;
+			insert += "','";
+			insert += order;
 			insert += "')";
 
 			PGresult *res = PQexec(conn, insert.c_str());
