@@ -10,6 +10,7 @@ void CreateTables(PGconn *conn);
 void CreateAddressTable(PGconn *conn);
 void CreateContainsTable(PGconn *conn);
 void CreateCustomerTable(PGconn *conn);
+void CreateDistributorsTable(PGconn *conn);
 void CreateMakesTable(PGconn *conn);
 void CreateOrdersTable(PGconn *conn);
 void CreatePayforTable(PGconn *conn);
@@ -18,6 +19,7 @@ void CreatePlacesTable(PGconn *conn);
 void CreateProductsTable(PGconn *conn);
 void CreateReceivesTable(PGconn *conn);
 void CreateStatusTable(PGconn *conn);
+void CreateSuppliedByTable(PGconn *conn);
 void CreateUpdatesTable(PGconn *conn);
 
 void CreateTables(PGconn *conn)
@@ -26,6 +28,7 @@ void CreateTables(PGconn *conn)
 	CreateAddressTable(conn);
 	CreateContainsTable(conn);
 	CreateCustomerTable(conn);
+	CreateDistributorsTable(conn);
 	CreateMakesTable(conn);
 	CreateOrdersTable(conn);
 	CreatePayforTable(conn);
@@ -34,6 +37,7 @@ void CreateTables(PGconn *conn)
 	CreateProductsTable(conn);
 	CreateReceivesTable(conn);
 	CreateStatusTable(conn);
+	CreateSuppliedByTable(conn);
 	CreateUpdatesTable(conn);
 }
 
@@ -90,6 +94,23 @@ void CreateCustomerTable(PGconn *conn)
 	}
 
 	else printf("Create customer table - successful\n");
+}
+
+void CreateDistributorsTable(PGconn *conn)
+{
+	string table = "CREATE TABLE IF NOT EXISTS Distributors (";
+	table += " D_id SERIAL NOT NULL,";
+	table += " Company_name VARCHAR(100) NOT NULL,";
+	table += " Home_page VARCHAR(255) NOT NULL,";
+	table += " Phone BIGINT NOT NULL,";
+	table += " Fax BIGINT NOT NULL)";
+
+	PGresult *res = PQexec(conn, table.c_str());
+	if (PQresultStatus(res) != PGRES_COMMAND_OK) {
+		printf("Create distributors table failed\n");
+	}
+
+	else printf("Create distributors table - successful\n");	
 }
 
 void CreateMakesTable(PGconn *conn)
@@ -220,6 +241,20 @@ void CreateStatusTable(PGconn *conn)
 	}
 
 	else printf("Create status table - successful\n");
+}
+
+void CreateSuppliedByTable(PGconn *conn)
+{
+	string customerTable = "CREATE TABLE IF NOT EXISTS suppliedby (";
+	customerTable += " P_id int NOT NULL ,";
+	customerTable += " D_id int NOT NULL)";
+
+	PGresult *res = PQexec(conn, customerTable.c_str());
+	if (PQresultStatus(res) != PGRES_COMMAND_OK) {
+		printf("Create suppliedby table failed\n");
+	}
+
+	else printf("Create suppliedby table - successful\n");
 }
 
 void CreateUpdatesTable(PGconn *conn)

@@ -8,9 +8,11 @@
 using namespace std;
 
 void PopulateTables(PGconn *conn);
+
 void PopulateAddressTable(PGconn *conn);
 void PopulateContainsTable(PGconn *conn);
 void PopulateCustomerTable(PGconn *conn);
+void PopulateDistributorsTable(PGconn *conn);
 void PopulateMakesTable(PGconn *conn);
 void PopulateOrdersTable(PGconn *conn);
 void PopulatePayforTable(PGconn *conn);
@@ -19,6 +21,7 @@ void PopulatePlacesTable(PGconn *conn);
 void PopulateProductsTable(PGconn *conn);
 void PopulateReceivesTable(PGconn *conn);
 void PopulateStatusTable(PGconn *conn);
+void PopulateSuppliedByTable(PGconn *conn);
 void PopulateUpdatesTable(PGconn *conn);
 
 extern PGconn *conn;
@@ -29,6 +32,7 @@ void PopulateTables(PGconn *conn)
 	PopulateAddressTable(conn);
 	PopulateContainsTable(conn);
 	PopulateCustomerTable(conn);
+	PopulateDistributorsTable(conn);
 	PopulateMakesTable(conn);
 	PopulateOrdersTable(conn);
 	PopulatePayforTable(conn);
@@ -37,6 +41,7 @@ void PopulateTables(PGconn *conn)
 	PopulateProductsTable(conn);
 	PopulateReceivesTable(conn);
 	PopulateStatusTable(conn);
+	PopulateSuppliedByTable(conn);
 	PopulateUpdatesTable(conn);
 }
 
@@ -169,6 +174,49 @@ void PopulateCustomerTable(PGconn *conn)
 			insert += email;
 			insert += "','";
 			insert += phone;
+			insert += "')";
+
+			PGresult *res = PQexec(conn, insert.c_str());
+			if  (PQresultStatus(res) != PGRES_COMMAND_OK)
+				printf("Insert tuple from csv failed\n");
+
+			PQclear(res);
+		}
+	}
+	cout << "\n"; 
+	file.close(); 
+}
+
+void PopulateDistributorsTable(PGconn *conn)
+{
+	ifstream file("distributor.csv");
+	printf("****BEGIN POPULATING distributors****\n");
+	string did, name, page, phone, fax;
+	while (file.good())
+	{
+		getline (file, did, ',');
+		if ( !file.eof())
+		{
+			getline (file, name, ',');
+			getline (file, page, ',');
+			getline (file, phone, ',');
+			getline (file, fax);
+			//cout << cat <<"\t" << pname << "\t" << sprice <<
+			//"\t"<< pprice  << "\n" ;
+
+			string insert = "INSERT INTO distributors (";
+			insert += "D_id, Company_name, Home_page, ";
+			insert += "Phone, Fax) ";
+			insert += "VALUES ('";
+			insert += did;
+			insert += "','";
+			insert += name;
+			insert += "','";
+			insert += page;
+			insert += "','";
+			insert += phone;
+			insert += "','";
+			insert += fax;
 			insert += "')";
 
 			PGresult *res = PQexec(conn, insert.c_str());
@@ -473,6 +521,37 @@ void PopulateStatusTable(PGconn *conn)
 			insert += "S_id, Status) ";
 			insert += "VALUES (DEFAULT,'";
 			insert += status;
+			insert += "')";
+
+			PGresult *res = PQexec(conn, insert.c_str());
+			if  (PQresultStatus(res) != PGRES_COMMAND_OK)
+				printf("Insert tuple from csv failed\n");
+
+			PQclear(res);
+		}
+	}
+	cout << "\n"; 
+	file.close(); 
+}
+
+void PopulateSuppliedByTable(PGconn *conn)
+{
+	ifstream file("suppliedby.csv");
+	printf("****BEGIN POPULATING suppliedby****\n");
+	string pid, did;
+	while (file.good())
+	{
+		getline (file, pid, ',');
+		if ( !file.eof())
+		{
+			getline (file, did);
+
+			string insert = "INSERT INTO suppliedby (";
+			insert += "P_id, D_id) ";
+			insert += "VALUES ('";
+			insert += pid;
+			insert += "','";
+			insert += did;
 			insert += "')";
 
 			PGresult *res = PQexec(conn, insert.c_str());
